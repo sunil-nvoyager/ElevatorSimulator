@@ -74,6 +74,7 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
         public void PrepareElevatorToGoToNextFloorOnTheList()
         {
             
@@ -96,6 +97,7 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
         private void GoToNextFloorOnTheList()
         {
             
@@ -144,6 +146,7 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
         private void FinalizeGoingToNextFloorOnTheList()
         {
             
@@ -189,6 +192,7 @@ namespace LiftSimulator
             
         }
         
+        /// <summary>
         public void AddNewFloorToTheList(Floor FloorToBeAdded)
         {
             
@@ -230,6 +234,7 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
         private bool SomePassengersWantsToGetOutOnThisFloor()
         {
             
@@ -249,6 +254,7 @@ namespace LiftSimulator
             return currentFloor;
         }
 
+        /// <summary>
         private Floor GetNextFloorToVisit()
         {
             
@@ -266,6 +272,7 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
         public List<Floor> GetListOfAllFloorsToVisit()
         {
             
@@ -276,6 +283,7 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
         private void UpdateElevatorDirection()
         {
             
@@ -298,6 +306,7 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
         public bool AddNewPassengerIfPossible(Passenger NewPassenger, Floor TargetFloor)
         {
             
@@ -324,6 +333,7 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
         public void RemovePassenger(Passenger PassengerToRemove)
         {
             
@@ -335,6 +345,7 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
         public void ResetElevatorTimer()
         {
             
@@ -346,6 +357,7 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
         private void MoveTheElevatorGraphicDown(int DestinationLevel)
         {
             
@@ -357,6 +369,7 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
         private void MoveTheElevatorGraphicUp(int DestinationLevel)
         {
             
@@ -368,6 +381,7 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
         private void CloseTheDoor()
         {
             
@@ -400,6 +414,7 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
         private void OpenTheDoor()
         {
             
@@ -447,6 +462,7 @@ namespace LiftSimulator
             return this.elevatorFrames[currentFrameNumber];
         }
 
+        /// <summary>
         public ElevatorStatus GetElevatorStatus()
         {
             
@@ -479,6 +495,7 @@ namespace LiftSimulator
         #region EVENTS
 
         public event EventHandler PassengerEnteredTheElevator;
+        /// <summary>
         public void OnPassengerEnteredTheElevator(PassengerEventArgs e)
         {
             
@@ -491,6 +508,7 @@ namespace LiftSimulator
         }
 
         public event EventHandler ElevatorIsFull;
+        /// <summary>
         public void OnElevatorIsFullAndHasToGoDown(EventArgs e)
         {
             
@@ -513,6 +531,7 @@ namespace LiftSimulator
             ResetElevatorTimer();
         }
 
+        /// <summary>
         public void Elevator_ElevatorTimerElapsed(object sender, ElapsedEventArgs e)
         {
             
