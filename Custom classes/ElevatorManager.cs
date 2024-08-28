@@ -66,16 +66,16 @@ namespace LiftSimulator
         }
 
         /// <summary>
-        /// Handles the request for an elevator by determining the appropriate action based on the passenger's floor and direction.
+        /// Handles the request for an elevator based on the passenger's current floor and desired direction.
         /// </summary>
-        /// <param name="PassengersFloor">The floor from which the passenger is requesting the elevator.</param>
-        /// <param name="PassengersDirection">The direction in which the passenger intends to travel (up or down).</param>
+        /// <param name="PassengersFloor">The floor where the passenger is located.</param>
+        /// <param name="PassengersDirection">The direction in which the passenger wants to go (up or down).</param>
         /// <remarks>
-        /// This method is responsible for managing the elevator request process. It first locks the critical section to ensure thread safety, as it can be invoked from multiple threads, such as the ElevatorManager thread or its timer thread.
-        /// Depending on the requested direction, it activates the corresponding lamp on the specified floor to indicate that an elevator is on its way.
-        /// The method then searches for all available elevators that can respond to the request and selects the optimal one to send.
-        /// If a suitable elevator is found, it proceeds to send that elevator to the passenger's floor.
-        /// This ensures efficient handling of elevator requests and improves user experience by minimizing wait times.
+        /// This method is responsible for managing the elevator request from a passenger. It first locks the critical section to ensure thread safety, as this method can be invoked from either the ElevatorManager thread or its timer thread. 
+        /// Depending on the desired direction of the passenger, it activates the corresponding lamp on the floor to indicate that an elevator is on its way. 
+        /// The method then searches for all available elevators that can be dispatched to the passenger's floor and direction. 
+        /// After identifying the potential elevators, it selects the optimal one to send based on predefined criteria. 
+        /// If a suitable elevator is found, it proceeds to send that elevator to the passenger's location.
         /// </remarks>
         public void PassengerNeedsAnElevator(Floor PassengersFloor, Direction PassengersDirection)
         {
@@ -106,15 +106,15 @@ namespace LiftSimulator
         }
 
         /// <summary>
-        /// Finds all elevators that can be sent to a specified floor in a given direction.
+        /// Finds all elevators that can be sent to the specified floor in the given direction.
         /// </summary>
         /// <param name="PassengersFloor">The floor where the passengers are located.</param>
         /// <param name="PassengersDirection">The direction in which the passengers want to go.</param>
         /// <remarks>
-        /// This method first clears the list of all free elevators. It then checks if there are any elevators already on their way to the passenger's floor by iterating through all available elevators and retrieving their list of floors to visit. 
-        /// If an elevator is found that is already en route to the specified floor, the method clears the list of free elevators and exits early, as there is no need to send another elevator.
-        /// If no elevators are found on their way, it proceeds to check for elevators that are currently idle (not moving). 
-        /// Any idle elevators found are added to the list of free elevators, making them available for the passengers.
+        /// This method first clears the list of all free elevators. It then checks if there are any elevators already on their way to the specified passenger's floor by examining the list of floors each elevator is scheduled to visit. 
+        /// If an elevator is found that is already en route to the passenger's floor, the method clears the list and exits early, as there is no need to send another elevator. 
+        /// If no elevators are on their way, it proceeds to identify elevators that are currently idle (not moving) and adds them to the list of free elevators. 
+        /// This allows for efficient management of elevator resources, ensuring that passengers are served promptly without unnecessary duplication of service.
         /// </remarks>
         private void FindAllElevatorsWhichCanBeSent(Floor PassengersFloor, Direction PassengersDirection)
         {
@@ -147,15 +147,15 @@ namespace LiftSimulator
         }
 
         /// <summary>
-        /// Chooses the optimal elevator to send based on the floor where the call came from.
+        /// Chooses the optimal elevator to send based on the current call from a specified floor.
         /// </summary>
-        /// <param name="FloorWhereTheCallCameFrom">The floor from which the elevator call was made.</param>
-        /// <returns>The optimal elevator to send, or null if no free elevators are available.</returns>
+        /// <param name="FloorWhereTheCallCameFrom">The floor from which the call for the elevator was made.</param>
+        /// <returns>The first available elevator from the list of free elevators, or null if no elevators are available.</returns>
         /// <remarks>
-        /// This method checks the list of all available free elevators. If there are no free elevators in the list, it returns null, indicating that no elevator can be sent at this time.
-        /// If there are free elevators, it selects and returns the first elevator from the list. 
-        /// This approach assumes that the first elevator in the list is the most optimal choice for responding to the call.
-        /// The method does not take into account the distance or current position of the elevators relative to the calling floor.
+        /// This method checks the list of all free elevators to determine if there are any available to respond to the call.
+        /// If the list is empty, it returns null, indicating that no elevators are currently free.
+        /// If there are free elevators, it selects and returns the first one in the list, which is considered optimal in this context.
+        /// This approach assumes that the first elevator in the list is the most suitable choice for responding to the call.
         /// </remarks>
         private Elevator ChooseOptimalElevatorToSend(Floor FloorWhereTheCallCameFrom)
         {
