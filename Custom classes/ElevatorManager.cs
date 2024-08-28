@@ -65,6 +65,11 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         public void PassengerNeedsAnElevator(Floor PassengersFloor, Direction PassengersDirection)
         {
             
@@ -93,6 +98,11 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         private void FindAllElevatorsWhichCanBeSent(Floor PassengersFloor, Direction PassengersDirection)
         {
             
@@ -123,6 +133,11 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         private Elevator ChooseOptimalElevatorToSend(Floor FloorWhereTheCallCameFrom)
         {
             
@@ -137,6 +152,11 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         private void SendAnElevator(Elevator ElevatorToSend, Floor TargetFloor)
         {            
             
@@ -152,6 +172,11 @@ namespace LiftSimulator
 
         #region EVENT HANDLERS
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         public void ElevatorManager_TimerElapsed(object sender, ElapsedEventArgs e)
         {
             
