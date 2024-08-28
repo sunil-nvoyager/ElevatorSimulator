@@ -77,14 +77,13 @@ namespace LiftSimulator
         }
 
         /// <summary>
-        /// Attempts to find an available elevator on the current floor or calls for a new one if none are available.
+        /// Finds an available elevator on the current floor or requests a new one if none are available.
         /// </summary>
         /// <remarks>
-        /// This method first updates the passenger's direction and retrieves a list of elevators currently waiting on the same floor.
-        /// It then iterates through the list of elevators to check if any are available and can accommodate the passenger's request to go to the target floor.
-        /// If an appropriate elevator is found, the passenger's status is updated to indicate they are getting into the elevator, and a separate thread is initiated to handle the entry process.
-        /// If no suitable elevator is found, the method requests the elevator manager to send an elevator to the current floor based on the passenger's direction.
-        /// This ensures that the passenger can either board an existing elevator or have one dispatched to their location.
+        /// This method first updates the direction of the passenger. It then retrieves a list of elevators that are currently waiting on the same floor.
+        /// The method iterates through the list of elevators to find one that is either not in use or is moving in the correct direction.
+        /// If an appropriate elevator is found, it attempts to add the passenger to that elevator. If successful, it updates the passenger's status to indicate they are getting into the elevator and initiates the process of entering the elevator on a separate thread.
+        /// If no suitable elevator is found, the method calls for an elevator through the building's elevator manager, indicating the current floor and the desired direction of travel.
         /// </remarks>
         private void FindAnElevatorOrCallForANewOne()
         {            
@@ -121,11 +120,10 @@ namespace LiftSimulator
         /// <param name="ElevatorToGetIn">The elevator that the passenger is entering.</param>
         /// <remarks>
         /// This method is responsible for managing the actions that occur when a passenger enters an elevator.
-        /// It first raises an event to notify that a passenger has entered the elevator, passing the current passenger's details through the event arguments.
-        /// Then, it unsubscribes from the event that indicates whether the elevator has arrived or is not full anymore, ensuring that the passenger no longer receives updates about that event.
-        /// Following this, it updates the user interface by moving the graphical representation of the passengers to reflect the new position of the elevator.
-        /// Finally, it makes the passenger control invisible and updates the reference to the current elevator being used by the passenger.
-        /// This method encapsulates the logic required to transition a passenger into an elevator smoothly and effectively.
+        /// It first raises an event to notify that a passenger has entered the elevator, passing along relevant event arguments.
+        /// Then, it unsubscribes from the current floor's elevator arrival event to prevent further notifications while the passenger is in transit.
+        /// The method also updates the user interface by moving the graphical representation of the passengers to the new position of the elevator.
+        /// Finally, it makes the passenger control invisible and updates the reference to the current elevator for the passenger.
         /// </remarks>
         private void GetInToTheElevator(Elevator ElevatorToGetIn)
         {
@@ -152,10 +150,9 @@ namespace LiftSimulator
         /// </summary>
         /// <remarks>
         /// This method is triggered when the elevator arrives at a floor. It checks if the current floor of the elevator matches the target floor for the passengers inside. 
-        /// If they are at their desired floor, it updates the passenger's status to indicate that they are leaving the building. 
-        /// Subsequently, it initiates the process for the passengers to exit the elevator by queuing a work item on the thread pool, which calls the 
-        /// <see cref="GetOutOfTheElevator"/> method to handle the exit procedure. This design allows for asynchronous handling of passenger exit, 
-        /// ensuring that the elevator can continue operating without delay.
+        /// If the floors match, it updates the passenger status to indicate that they are leaving the building. 
+        /// Subsequently, it initiates the process for the passengers to exit the elevator by queuing a work item on the thread pool, which calls the method <c>GetOutOfTheElevator</c> with the current elevator instance as an argument.
+        /// This allows for a non-blocking exit process, ensuring that the elevator can continue to operate smoothly without waiting for passengers to disembark.
         /// </remarks>
         public void ElevatorReachedNextFloor()
         {
@@ -177,12 +174,14 @@ namespace LiftSimulator
         /// </summary>
         /// <param name="ElevatorWhichArrived">The elevator instance from which the passenger is exiting.</param>
         /// <remarks>
-        /// This method performs two main actions when a passenger exits an elevator. 
-        /// First, it removes the passenger from the specified elevator using the 
-        /// <paramref name="ElevatorWhichArrived"/> instance's <c>RemovePassenger</c> method. 
-        /// After successfully removing the passenger, it calls the <c>LeaveTheBuilding</c> method 
-        /// to signify that the passenger has exited the building. This method does not return any value 
-        /// and is intended to be used as part of the passenger's exit process from the elevator.
+        /// This method performs two main actions when a passenger exits the elevator. 
+        /// First, it removes the passenger from the specified elevator by calling the 
+        /// <see cref="Elevator.RemovePassenger"/> method, ensuring that the passenger 
+        /// is no longer counted as being inside the elevator. 
+        /// Second, it invokes the <see cref="LeaveTheBuilding"/> method to simulate 
+        /// the passenger leaving the building after exiting the elevator. 
+        /// This method does not return any value and is intended to be called 
+        /// when a passenger has reached their desired floor and is ready to exit.
         /// </remarks>
         private void GetOutOfTheElevator(Elevator ElevatorWhichArrived)
         {
@@ -199,10 +198,10 @@ namespace LiftSimulator
         /// Updates the direction of the passenger based on the current and target floor indices.
         /// </summary>
         /// <remarks>
-        /// This method determines the direction in which a passenger should move based on their current floor and the target floor.
+        /// This method determines the direction in which the passenger should move based on their current floor index and the target floor index.
         /// If the current floor index is less than the target floor index, the passenger is moving upwards, and the direction is set to <see cref="Direction.Up"/>.
         /// Conversely, if the current floor index is greater than or equal to the target floor index, the direction is set to <see cref="Direction.Down"/>.
-        /// This method does not return a value and directly updates the <see cref="PassengerDirection"/> property.
+        /// This method does not return any value and directly modifies the <see cref="PassengerDirection"/> property.
         /// </remarks>
         private void UpdatePassengerDirection()
         {
@@ -250,11 +249,10 @@ namespace LiftSimulator
         /// Handles the process of a passenger leaving the building.
         /// </summary>
         /// <remarks>
-        /// This method updates the passenger's position to the elevator's current Y position, flips the passenger graphic horizontally, 
-        /// and makes the passenger visible as they move towards the exit location of the building. 
-        /// After reaching the exit, the passenger is made invisible again, and it is noted that the object should ideally be disposed of 
-        /// instead of just being made invisible. Additionally, the passenger is removed from the list of people who require animation, 
-        /// indicating that no further animation is necessary for this passenger.
+        /// This method updates the passenger's position to the elevator's current Y position, flips the passenger's graphic horizontally, 
+        /// and makes the passenger visible as they move towards the exit of the building. After reaching the exit, the passenger is made 
+        /// invisible again, and it is noted that the object should ideally be disposed of instead of just being hidden. Additionally, 
+        /// the passenger is removed from the list of people who require animation, indicating that no further animation is needed for this passenger.
         /// </remarks>
         private void LeaveTheBuilding()
         {
@@ -285,11 +283,11 @@ namespace LiftSimulator
         /// </summary>
         /// <param name="DestinationPosition">The target horizontal position to move the passenger graphic to.</param>
         /// <remarks>
-        /// This method animates the movement of the passenger graphic by updating its position in a horizontal direction.
-        /// If the current position of the passenger is greater than the destination position, it moves left; otherwise, it moves right.
-        /// The movement is animated with a delay specified by <c>passengerAnimationDelay</>, allowing for a smooth transition.
-        /// The method uses a loop to incrementally update the passenger's position until it reaches the destination.
-        /// Note that this method does not return any value and modifies the state of the passenger graphic directly.
+        /// This method updates the passenger's position on the X-axis by moving it either left or right, depending on the current position relative to the destination.
+        /// If the current X position is greater than the destination, the method moves the passenger left by decrementing the X coordinate in a loop until it reaches the destination.
+        /// Conversely, if the current X position is less than the destination, it moves the passenger right by incrementing the X coordinate.
+        /// During each step of the movement, there is a delay specified by <see cref="passengerAnimationDelay"/> to create an animation effect.
+        /// The Y coordinate remains unchanged throughout this operation.
         /// </remarks>
         private void MovePassengersGraphicHorizontally (int DestinationPosition)
         {
