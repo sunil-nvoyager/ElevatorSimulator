@@ -76,6 +76,7 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
         private void FindAnElevatorOrCallForANewOne()
         {            
             
@@ -105,6 +106,7 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
         private void GetInToTheElevator(Elevator ElevatorToGetIn)
         {
             
@@ -125,6 +127,7 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
         public void ElevatorReachedNextFloor()
         {
             
@@ -140,6 +143,7 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
         private void GetOutOfTheElevator(Elevator ElevatorWhichArrived)
         {
             
@@ -151,6 +155,7 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
         private void UpdatePassengerDirection()
         {
             
@@ -165,6 +170,7 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
         private bool ElevatorsDirectionIsNoneOrOk(Elevator ElevatorOnMyFloor)
         {
             
@@ -182,6 +188,7 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
         private void LeaveTheBuilding()
         {
             
@@ -206,6 +213,7 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
         private void MovePassengersGraphicHorizontally (int DestinationPosition)
         {
             
@@ -260,6 +268,7 @@ namespace LiftSimulator
 
         #region EVENT HANDLERS
 
+        /// <summary>
         public void Passenger_NewPassengerAppeared(object sender, EventArgs e)
         {
             
@@ -271,6 +280,7 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
         public void Passenger_ElevatorHasArrivedOrIsNoteFullAnymore(object sender, EventArgs e)
         {            
             
