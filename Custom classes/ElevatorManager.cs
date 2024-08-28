@@ -65,6 +65,7 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
         public void PassengerNeedsAnElevator(Floor PassengersFloor, Direction PassengersDirection)
         {
             
@@ -93,6 +94,7 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
         private void FindAllElevatorsWhichCanBeSent(Floor PassengersFloor, Direction PassengersDirection)
         {
             
@@ -123,6 +125,7 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
         private Elevator ChooseOptimalElevatorToSend(Floor FloorWhereTheCallCameFrom)
         {
             
@@ -137,6 +140,7 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
         private void SendAnElevator(Elevator ElevatorToSend, Floor TargetFloor)
         {            
             
@@ -152,6 +156,7 @@ namespace LiftSimulator
 
         #region EVENT HANDLERS
 
+        /// <summary>
         public void ElevatorManager_TimerElapsed(object sender, ElapsedEventArgs e)
         {
             
