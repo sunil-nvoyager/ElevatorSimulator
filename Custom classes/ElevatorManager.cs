@@ -65,6 +65,19 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Notifies the elevator system that a passenger needs an elevator from a specific floor and direction.
+        /// </summary>
+        /// <param name="PassengersFloor">The floor from which the passenger is requesting an elevator.</param>
+        /// <param name="PassengersDirection">The direction in which the passenger wants to go (up or down).</param>
+        /// <remarks>
+        /// This method is responsible for handling the request for an elevator by a passenger. It first locks the operation to ensure thread safety, as it can be invoked from different threads, such as the ElevatorManager thread or its timer thread.
+        /// Depending on the requested direction, it activates the appropriate lamp on the specified floor to indicate that an elevator is on its way.
+        /// The method then searches for all elevators that can be dispatched to the passenger's floor and direction.
+        /// After identifying potential elevators, it selects the optimal one to send based on predefined criteria.
+        /// If a suitable elevator is found, it sends the elevator to the passenger's floor.
+        /// This process ensures efficient handling of elevator requests in a multi-threaded environment.
+        /// </remarks>
         public void PassengerNeedsAnElevator(Floor PassengersFloor, Direction PassengersDirection)
         {
             
@@ -93,6 +106,18 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Finds all elevators that can be sent to a specified floor in a given direction.
+        /// </summary>
+        /// <param name="PassengersFloor">The floor where the passengers are located.</param>
+        /// <param name="PassengersDirection">The direction in which the passengers want to go.</param>
+        /// <remarks>
+        /// This method first clears the list of free elevators. It then checks if there are any elevators already on their way to the specified passenger's floor.
+        /// If an elevator is found that is already en route, the method clears the list and returns immediately, indicating that no new elevator needs to be sent.
+        /// If no elevators are on their way, it proceeds to check for elevators that are currently idle (not moving).
+        /// All idle elevators are added to the list of free elevators, which can then be used to send an elevator to the passengers.
+        /// This method effectively manages elevator dispatching by ensuring that only available elevators are considered for new requests.
+        /// </remarks>
         private void FindAllElevatorsWhichCanBeSent(Floor PassengersFloor, Direction PassengersDirection)
         {
             
@@ -123,6 +148,16 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Chooses the optimal elevator to send based on the floor from which the call originated.
+        /// </summary>
+        /// <param name="FloorWhereTheCallCameFrom">The floor from which the elevator call was made.</param>
+        /// <returns>The optimal elevator to send, or null if no elevators are available.</returns>
+        /// <remarks>
+        /// This method checks the list of all free elevators. If the list is empty, it returns null, indicating that there are no available elevators to respond to the call.
+        /// If there are free elevators, it selects and returns the first elevator in the list.
+        /// The logic for determining the "optimal" elevator could be expanded in the future to consider factors such as distance or current load.
+        /// </remarks>
         private Elevator ChooseOptimalElevatorToSend(Floor FloorWhereTheCallCameFrom)
         {
             
@@ -137,6 +172,18 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sends an elevator to a specified target floor.
+        /// </summary>
+        /// <param name="ElevatorToSend">The elevator that is to be sent to the target floor.</param>
+        /// <param name="TargetFloor">The floor that the elevator should go to.</param>
+        /// <remarks>
+        /// This method adds the target floor to the list of floors for the specified elevator and then
+        /// initiates a new thread to prepare the elevator for its journey to the next floor in the list.
+        /// The use of a thread allows the elevator's preparation process to run asynchronously,
+        /// ensuring that the main application remains responsive while the elevator is being dispatched.
+        /// This method does not return any value and operates on the provided elevator instance directly.
+        /// </remarks>
         private void SendAnElevator(Elevator ElevatorToSend, Floor TargetFloor)
         {            
             
@@ -147,11 +194,19 @@ namespace LiftSimulator
             
         }
 
-        #endregion
-
-
-        #region EVENT HANDLERS
-
+        /// <summary>
+        /// Handles the timer elapsed event for the elevator manager.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">An <see cref="ElapsedEventArgs"/> that contains the event data.</param>
+        /// <remarks>
+        /// This method checks each floor in the building to determine if there are passengers waiting for an elevator.
+        /// It inspects the state of the lamps on each floor: if the 'LampUp' is activated, it indicates that a passenger needs an elevator to go up,
+        /// and if the 'LampDown' is activated, it indicates a need to go down. For each active lamp, it calls the
+        /// <see cref="PassengerNeedsAnElevator"/> method to handle the request, passing the corresponding floor and direction.
+        /// A delay of 500 milliseconds is introduced after each request to prevent multiple elevators from being sent simultaneously.
+        /// This method is typically invoked at regular intervals by a timer to manage elevator requests efficiently.
+        /// </remarks>
         public void ElevatorManager_TimerElapsed(object sender, ElapsedEventArgs e)
         {
             
