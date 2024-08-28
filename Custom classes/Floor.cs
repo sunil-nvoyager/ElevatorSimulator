@@ -64,6 +64,7 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
         private int? FindFirstFreeSlotInQueue()
         {
             
@@ -80,6 +81,7 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
         private void AddRemoveNewPassengerToTheQueue(Passenger PassengerToAddOrRemvove, bool AddFlag)
         {
             
@@ -108,6 +110,7 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
         public void AddRemoveElevatorToTheListOfElevatorsWaitingHere(Elevator ElevatorToAddOrRemove, bool AddFlag)
         {
             
@@ -138,6 +141,7 @@ namespace LiftSimulator
             return maximumAmmountOfPeopleInTheQueue;
         }
 
+        /// <summary>
         public int GetCurrentAmmountOfPeopleInTheQueue()
         {
             
@@ -181,6 +185,7 @@ namespace LiftSimulator
         #region EVENTS
 
         public event EventHandler NewPassengerAppeared;
+        /// <summary>
         public void OnNewPassengerAppeared(EventArgs e)
         {
             
@@ -193,6 +198,7 @@ namespace LiftSimulator
         }
 
         public event EventHandler ElevatorHasArrivedOrIsNotFullAnymore;
+        /// <summary>
         public void OnElevatorHasArrivedOrIsNoteFullAnymore(ElevatorEventArgs e)
         {
             
@@ -209,6 +215,7 @@ namespace LiftSimulator
 
         #region EVENT HADNLERS
 
+        /// <summary>
         public void Floor_NewPassengerAppeared(object sender, EventArgs e)
         {
             
@@ -224,6 +231,7 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
         public void Floor_PassengerEnteredTheElevator(object sender, EventArgs e)
         {
             
