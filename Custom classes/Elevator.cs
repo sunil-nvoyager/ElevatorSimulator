@@ -75,12 +75,17 @@ namespace LiftSimulator
         }
 
         /// <summary>
-        /// Prepares the elevator to move to the next floor in the queue.
+        /// Prepares the elevator to move to the next floor in its scheduled list.
         /// </summary>
         /// <remarks>
-        /// This method is responsible for setting the elevator's status to "PreparingForJob" and stopping the elevator's timer.
-        /// It removes the elevator from the list of elevators waiting at the current floor, closes the elevator door, and then initiates the movement to the next floor on the list.
-        /// This method can be invoked from either the ElevatorManager thread or the elevator's timer thread, ensuring that the elevator is ready for its next operation.
+        /// This method can be invoked from the ElevatorManager thread (via SendAnElevator()) or from the elevator's timer thread (via Elevator_ElevatorTimerElapsed()).
+        /// It performs several actions to prepare the elevator for its next job:
+        /// 1. Updates the elevator's status to indicate that it is preparing for a job.
+        /// 2. Stops the elevator timer to prevent any further actions until the elevator is ready.
+        /// 3. Removes the elevator from the current floor's list of waiting elevators, ensuring that it is no longer counted as waiting.
+        /// 4. Closes the elevator door to ensure safety during movement.
+        /// 5. Initiates the movement of the elevator to the next floor in its list.
+        /// This method is crucial for managing the elevator's operations and ensuring a smooth transition between floors.
         /// </remarks>
         public void PrepareElevatorToGoToNextFloorOnTheList()
         {
@@ -108,14 +113,11 @@ namespace LiftSimulator
         /// Moves the elevator to the next floor in the list of floors to visit.
         /// </summary>
         /// <remarks>
-        /// This method controls the movement of the elevator based on its current direction (up or down).
-        /// It updates the elevator's status and graphic representation as it moves to the next floor.
-        /// The current floor is updated, and the floor is removed from the list of floors to visit.
-        /// The elevator's direction is also updated accordingly. 
-        /// If there are passengers who want to get out at the current floor or if the elevator has reached its destination, 
-        /// the method finalizes the movement to the next floor. 
-        /// If the elevator is not full, it checks if it should stop at the current floor based on the lamp indicators. 
-        /// If none of these conditions are met, the elevator continues to the next floor in the list.
+        /// This method handles the movement of the elevator based on its current direction, either up or down.
+        /// It updates the elevator's status, moves the elevator graphic accordingly, and manages the list of floors to visit.
+        /// The current floor is updated, and if any passengers want to get out at the current floor or if the elevator has reached the end of its route,
+        /// it finalizes the trip to the next floor. If the elevator is not full, it checks for any lamp signals indicating a stop at the current floor.
+        /// If no conditions are met for stopping, it recursively calls itself to continue to the next floor in the list.
         /// </remarks>
         private void GoToNextFloorOnTheList()
         {
@@ -169,13 +171,17 @@ namespace LiftSimulator
         /// Finalizes the process of the elevator arriving at the next floor.
         /// </summary>
         /// <remarks>
-        /// This method is responsible for several key actions that occur when the elevator reaches a new floor. 
-        /// It first resets the appropriate lamp indicator for the current floor based on the elevator's direction (up, down, or none).
-        /// After resetting the lamp, it opens the elevator door to allow passengers to enter and exit. 
-        /// The elevator's status is then updated to indicate that it is waiting for passengers. 
-        /// Each passenger inside the elevator is informed that they have reached their destination, and a delay is introduced to ensure that all passengers are visible as they exit. 
-        /// The elevator is then added to the list of elevators waiting at the current floor, and an event is raised to notify any waiting passengers that the elevator has arrived or is no longer full. 
-        /// Finally, a timer is started to manage the elevator's next actions.
+        /// This method is responsible for managing the actions that occur when the elevator reaches a new floor.
+        /// It resets the appropriate lamp indicator for the current floor based on the elevator's direction (up, down, or none).
+        /// After resetting the lamps, it opens the elevator doors and updates the elevator's status to indicate that it is waiting for passengers to enter or exit.
+        /// 
+        /// The method then informs all passengers currently inside the elevator that they have reached their destination by calling the 
+        /// <see cref="Passenger.ElevatorReachedNextFloor"/> method for each passenger. To ensure that all passengers are visible when exiting, 
+        /// a delay is introduced based on each passenger's animation delay multiplied by a factor of 40.
+        /// 
+        /// Additionally, the elevator is added to the list of elevators waiting at the current floor, and an event is raised to notify 
+        /// any waiting passengers that the elevator has arrived or is no longer full. Finally, a timer for the elevator is started to manage 
+        /// subsequent actions.
         /// </remarks>
         private void FinalizeGoingToNextFloorOnTheList()
         {
@@ -225,13 +231,14 @@ namespace LiftSimulator
         /// <summary>
         /// Adds a new floor to the list of floors the elevator will visit.
         /// </summary>
-        /// <param name="FloorToBeAdded">The floor to be added to the elevator's list of destinations.</param>
+        /// <param name="FloorToBeAdded">The floor to be added to the list of floors to visit.</param>
         /// <remarks>
-        /// This method is designed to be thread-safe, using a lock to prevent concurrent modifications from different threads, such as the ElevatorManager or passenger threads.
+        /// This method is designed to be thread-safe and can be invoked from different threads, such as the ElevatorManager thread or a passenger's thread.
         /// It first checks if the specified floor is already in the list of floors to visit; if it is, the method exits without making any changes.
-        /// If the elevator is currently moving upwards, it adds all floors between the current floor and the specified floor to the list, ensuring that no duplicates are added.
-        /// Conversely, if the elevator is moving downwards, it adds all floors in the downward direction to the list, again avoiding duplicates.
-        /// Finally, it updates the direction of the elevator after modifying the list of floors.
+        /// If the elevator is currently going up, it adds all floors between the current floor and the new floor (exclusive) to the list of floors to visit.
+        /// Conversely, if the elevator is going down, it adds all floors between the current floor and the new floor (exclusive) in descending order.
+        /// After updating the list of floors, it calls the method to update the elevator's direction based on the new state.
+        /// This ensures that the elevator's route is efficiently managed and reflects any new requests for floors.
         /// </remarks>
         public void AddNewFloorToTheList(Floor FloorToBeAdded)
         {
@@ -281,10 +288,10 @@ namespace LiftSimulator
         /// True if at least one passenger inside the elevator has a target floor that matches the current floor; otherwise, false.
         /// </returns>
         /// <remarks>
-        /// This method iterates through a list of passengers currently inside the elevator, checking each passenger's target floor.
-        /// If a passenger's target floor matches the elevator's current floor, the method returns true, indicating that at least one passenger wants to exit.
-        /// If no passengers have the current floor as their target, the method returns false.
-        /// This is useful for managing elevator stops and ensuring that the elevator only halts when necessary.
+        /// This method iterates through a list of passengers currently inside the elevator. For each passenger, it checks their target floor using the 
+        /// <see cref="Passenger.GetTargetFloor"/> method. If a match is found with the current floor of the elevator, the method returns true, indicating 
+        /// that at least one passenger wants to exit on this floor. If no passengers have a matching target floor, the method returns false. 
+        /// This is useful for determining whether the elevator should stop at the current floor to allow passengers to disembark.
         /// </remarks>
         private bool SomePassengersWantsToGetOutOnThisFloor()
         {
@@ -300,6 +307,15 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Retrieves the current floor of the building.
+        /// </summary>
+        /// <returns>The current <see cref="Floor"/> object representing the floor the elevator is currently on.</returns>
+        /// <remarks>
+        /// This method provides access to the current floor information of the elevator system.
+        /// It returns an instance of the <see cref="Floor"/> class, which contains details about the floor such as its number and any associated attributes.
+        /// This is useful for determining the elevator's position within a multi-floor structure and can be used in various operational contexts, such as displaying the current floor to users or making decisions based on the elevator's location.
+        /// </remarks>
         public Floor GetCurrentFloor()
         {
             return currentFloor;
@@ -336,9 +352,10 @@ namespace LiftSimulator
         /// </summary>
         /// <returns>A list of <see cref="Floor"/> objects representing the floors to visit.</returns>
         /// <remarks>
-        /// This method is thread-safe and uses a locking mechanism to ensure that the list of floors is not modified while it is being accessed.
-        /// The lock prevents race conditions that could occur if one thread is adding a new floor while another thread is trying to retrieve the list.
-        /// As a result, this method guarantees that the returned list is consistent and reflects the current state of the floors to visit.
+        /// This method provides a thread-safe way to access the list of floors to visit by using a lock to prevent 
+        /// concurrent modifications. The lock ensures that while one thread is accessing the list, no other thread 
+        /// can modify it, thus avoiding potential race conditions. The returned list is a reference to the original 
+        /// list, so any modifications to the list after retrieval will affect the original list.
         /// </remarks>
         public List<Floor> GetListOfAllFloorsToVisit()
         {
@@ -354,11 +371,11 @@ namespace LiftSimulator
         /// Updates the direction of the elevator based on the next floor to visit.
         /// </summary>
         /// <remarks>
-        /// This method determines the elevator's direction by comparing the current floor with the next floor to visit.
+        /// This method checks the current floor of the elevator and compares it with the next floor to visit.
         /// If there is no next floor to visit, the elevator direction is set to 'None'.
-        /// If the current floor's index is less than the next floor's index, the direction is set to 'Up', indicating that the elevator should move upwards.
-        /// Conversely, if the current floor's index is greater than or equal to the next floor's index, the direction is set to 'Down', indicating that the elevator should move downwards.
-        /// This method does not require a lock since it is only referenced by the AddNewFloorToTheList method, which has its own locking mechanism.
+        /// If the current floor's index is less than the next floor's index, the elevator direction is set to 'Up'.
+        /// Otherwise, it is set to 'Down'. This method does not require a lock since it is only called 
+        /// by the AddNewFloorToTheList method, which manages its own locking mechanism.
         /// </remarks>
         private void UpdateElevatorDirection()
         {
@@ -383,19 +400,16 @@ namespace LiftSimulator
         }
 
         /// <summary>
-        /// Attempts to add a new passenger to the elevator if there is available space.
+        /// Attempts to add a new passenger to the elevator if possible.
         /// </summary>
         /// <param name="NewPassenger">The passenger to be added to the elevator.</param>
         /// <param name="TargetFloor">The floor where the passenger intends to go.</param>
         /// <returns>True if the passenger was added successfully; otherwise, false.</returns>
         /// <remarks>
-        /// This method checks if the elevator is not full and is in a suitable status (either idle or waiting for passengers).
-        /// If these conditions are met, it resets the elevator timer to allow the new passenger time to board.
-        /// The new passenger is then added to the list of people inside the elevator, and the target floor is recorded.
-        /// If adding this passenger causes the elevator to reach its maximum capacity, it sets the elevator's status to 
-        /// "PreparingForJob" to prevent any further passengers from attempting to board.
-        /// If the elevator is full or not in an appropriate state, the method will return false, indicating that the 
-        /// new passenger could not be added.
+        /// This method checks if there is available space in the elevator and if the elevator is in an appropriate state (either idle or waiting for passengers).
+        /// If both conditions are met, it resets the elevator timer to allow the passenger time to board, adds the new passenger to the list of people inside,
+        /// and updates the target floor. If the number of passengers reaches the maximum capacity, it sets the elevator status to prevent further boarding.
+        /// This method ensures that the elevator operates smoothly and efficiently by managing its capacity and status appropriately.
         /// </remarks>
         public bool AddNewPassengerIfPossible(Passenger NewPassenger, Floor TargetFloor)
         {
@@ -445,13 +459,14 @@ namespace LiftSimulator
         }
 
         /// <summary>
-        /// Resets the elevator timer by stopping and then starting it again.
+        /// Resets the elevator timer by stopping and restarting it.
         /// </summary>
         /// <remarks>
-        /// This method is designed to be thread-safe by using a lock on the <paramref name="locker"/> object.
-        /// When called, it first stops the current elevator timer, which may be running, and then immediately restarts it.
-        /// This is useful in scenarios where the elevator's timer needs to be refreshed, such as when the elevator is called or when it reaches a certain floor.
-        /// The use of locking ensures that the timer reset operation is not interrupted by other threads, maintaining the integrity of the timer state.
+        /// This method is designed to reset the timer that controls the elevator's operation.
+        /// It uses a locking mechanism to ensure that the timer is safely stopped and started without interference from other threads.
+        /// When this method is called, it first stops the current timer, which halts any ongoing timing operations.
+        /// Then, it immediately restarts the timer, effectively resetting its countdown.
+        /// This is particularly useful in scenarios where the elevator's operation needs to be refreshed or reinitialized.
         /// </remarks>
         public void ResetElevatorTimer()
         {
@@ -467,14 +482,14 @@ namespace LiftSimulator
         /// <summary>
         /// Moves the elevator graphic down to the specified destination level.
         /// </summary>
-        /// <param name="DestinationLevel">The level to which the elevator graphic should move down.</param>
+        /// <param name="DestinationLevel">The level to which the elevator graphic should be moved down.</param>
         /// <remarks>
         /// This method animates the movement of the elevator graphic by updating its position 
-        /// from the current Y position to the specified <paramref name="DestinationLevel"/>. 
-        /// It uses a loop to incrementally change the Y position of the elevator, simulating 
-        /// a downward movement. The animation delay is controlled by the <see cref="elevatorAnimationDelay"/> 
-        /// property, which determines how long the thread sleeps between each position update. 
-        /// This creates a smooth visual effect as the elevator moves downwards.
+        /// on the Y-axis from its current position to the specified <paramref name="DestinationLevel"/>. 
+        /// It uses a loop to incrementally change the elevator's Y position, pausing for a specified 
+        /// duration (defined by <see cref="elevatorAnimationDelay"/>) between each update to create 
+        /// a smooth animation effect. The X position of the elevator remains constant during this 
+        /// movement, as it is determined by the <see cref="GetElevatorXPosition"/> method.
         /// </remarks>
         private void MoveTheElevatorGraphicDown(int DestinationLevel)
         {
@@ -493,9 +508,9 @@ namespace LiftSimulator
         /// <param name="DestinationLevel">The level to which the elevator graphic should move.</param>
         /// <remarks>
         /// This method animates the movement of the elevator graphic by updating its position in a loop.
-        /// It starts from the current Y position of the elevator and decrements the Y coordinate until it reaches the specified <paramref name="DestinationLevel"/>.
-        /// The animation is controlled by a delay defined by <see cref="elevatorAnimationDelay"/>, which pauses the thread between position updates to create a smooth visual effect.
-        /// This method does not return any value and modifies the elevator's position directly.
+        /// It retrieves the current Y position of the elevator and decrements it until it reaches the specified <paramref name="DestinationLevel"/>.
+        /// During each iteration, the method pauses for a duration defined by <see cref="elevatorAnimationDelay"/> to create a smooth animation effect.
+        /// The elevator's X position remains constant while the Y position is updated, simulating an upward movement.
         /// </remarks>
         private void MoveTheElevatorGraphicUp(int DestinationLevel)
         {
@@ -514,11 +529,11 @@ namespace LiftSimulator
         /// <remarks>
         /// This method simulates the closing of a door by iterating through five frames, 
         /// where each frame represents a stage in the closing process. The method uses 
-        /// a loop to transition from one frame to the next, with a brief pause of 100 milliseconds 
+        /// a loop to transition from one frame to the next, with a brief pause (100 milliseconds) 
         /// between each transition to simulate the time taken for the door to close. 
-        /// The current frame number is updated sequentially from 0 to 5, indicating the 
-        /// progression of the door closing action. This method does not return any value 
-        /// and operates on the instance variable <c>currentFrameNumber</c>.
+        /// The current frame number is updated in each iteration until it reaches the final frame.
+        /// This method does not return any value and is intended to be called when 
+        /// a door-closing action is required.
         /// </remarks>
         private void CloseTheDoor()
         {
