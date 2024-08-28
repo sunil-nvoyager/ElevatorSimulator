@@ -65,6 +65,18 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Handles the request for an elevator by determining the appropriate action based on the passenger's floor and direction.
+        /// </summary>
+        /// <param name="PassengersFloor">The floor from which the passenger is requesting the elevator.</param>
+        /// <param name="PassengersDirection">The direction in which the passenger intends to travel (up or down).</param>
+        /// <remarks>
+        /// This method is responsible for managing the elevator request process. It first locks the critical section to ensure thread safety, as it can be invoked from multiple threads, such as the ElevatorManager thread or its timer thread.
+        /// Depending on the requested direction, it activates the corresponding lamp on the specified floor to indicate that an elevator is on its way.
+        /// The method then searches for all available elevators that can respond to the request and selects the optimal one to send.
+        /// If a suitable elevator is found, it proceeds to send that elevator to the passenger's floor.
+        /// This ensures efficient handling of elevator requests and improves user experience by minimizing wait times.
+        /// </remarks>
         public void PassengerNeedsAnElevator(Floor PassengersFloor, Direction PassengersDirection)
         {
             
@@ -93,6 +105,17 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Finds all elevators that can be sent to a specified floor in a given direction.
+        /// </summary>
+        /// <param name="PassengersFloor">The floor where the passengers are located.</param>
+        /// <param name="PassengersDirection">The direction in which the passengers want to go.</param>
+        /// <remarks>
+        /// This method first clears the list of all free elevators. It then checks if there are any elevators already on their way to the passenger's floor by iterating through all available elevators and retrieving their list of floors to visit. 
+        /// If an elevator is found that is already en route to the specified floor, the method clears the list of free elevators and exits early, as there is no need to send another elevator.
+        /// If no elevators are found on their way, it proceeds to check for elevators that are currently idle (not moving). 
+        /// Any idle elevators found are added to the list of free elevators, making them available for the passengers.
+        /// </remarks>
         private void FindAllElevatorsWhichCanBeSent(Floor PassengersFloor, Direction PassengersDirection)
         {
             
@@ -123,6 +146,17 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Chooses the optimal elevator to send based on the floor where the call came from.
+        /// </summary>
+        /// <param name="FloorWhereTheCallCameFrom">The floor from which the elevator call was made.</param>
+        /// <returns>The optimal elevator to send, or null if no free elevators are available.</returns>
+        /// <remarks>
+        /// This method checks the list of all available free elevators. If there are no free elevators in the list, it returns null, indicating that no elevator can be sent at this time.
+        /// If there are free elevators, it selects and returns the first elevator from the list. 
+        /// This approach assumes that the first elevator in the list is the most optimal choice for responding to the call.
+        /// The method does not take into account the distance or current position of the elevators relative to the calling floor.
+        /// </remarks>
         private Elevator ChooseOptimalElevatorToSend(Floor FloorWhereTheCallCameFrom)
         {
             
@@ -137,6 +171,17 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sends an elevator to a specified target floor.
+        /// </summary>
+        /// <param name="ElevatorToSend">The elevator that will be sent to the target floor.</param>
+        /// <param name="TargetFloor">The floor to which the elevator is being sent.</param>
+        /// <remarks>
+        /// This method adds the target floor to the list of floors that the specified elevator needs to visit.
+        /// It then creates a new thread using the ThreadPool to prepare the elevator for its journey to the next floor in the list.
+        /// This allows the elevator operation to run asynchronously, ensuring that the main thread remains responsive while the elevator is being dispatched.
+        /// The method does not return any value and operates on the provided elevator instance directly.
+        /// </remarks>
         private void SendAnElevator(Elevator ElevatorToSend, Floor TargetFloor)
         {            
             
@@ -152,6 +197,19 @@ namespace LiftSimulator
 
         #region EVENT HANDLERS
 
+        /// <summary>
+        /// Handles the timer elapsed event for the elevator manager.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">An <see cref="ElapsedEventArgs"/> that contains the event data.</param>
+        /// <remarks>
+        /// This method checks each floor in the building to determine if there are passengers waiting for an elevator.
+        /// It inspects the state of each floor's up and down lamps to identify if a passenger needs an elevator.
+        /// If the up lamp is lit, it calls the <see cref="PassengerNeedsAnElevator"/> method with the direction set to Up.
+        /// If the down lamp is lit, it calls the same method with the direction set to Down.
+        /// To prevent sending multiple elevators simultaneously, there is a delay of 500 milliseconds after each request.
+        /// This ensures that the elevator system operates smoothly and efficiently, responding to passenger needs without overwhelming the system.
+        /// </remarks>
         public void ElevatorManager_TimerElapsed(object sender, ElapsedEventArgs e)
         {
             
