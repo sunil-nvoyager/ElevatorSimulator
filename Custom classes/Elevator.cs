@@ -74,6 +74,11 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         public void PrepareElevatorToGoToNextFloorOnTheList()
         {
             
@@ -96,6 +101,11 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         private void GoToNextFloorOnTheList()
         {
             
@@ -144,6 +154,11 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         private void FinalizeGoingToNextFloorOnTheList()
         {
             
@@ -189,6 +204,11 @@ namespace LiftSimulator
             
         }
         
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         public void AddNewFloorToTheList(Floor FloorToBeAdded)
         {
             
@@ -230,6 +250,11 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         private bool SomePassengersWantsToGetOutOnThisFloor()
         {
             
@@ -249,6 +274,11 @@ namespace LiftSimulator
             return currentFloor;
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         private Floor GetNextFloorToVisit()
         {
             
@@ -266,6 +296,11 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         public List<Floor> GetListOfAllFloorsToVisit()
         {
             
@@ -276,6 +311,11 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         private void UpdateElevatorDirection()
         {
             
@@ -298,6 +338,11 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         public bool AddNewPassengerIfPossible(Passenger NewPassenger, Floor TargetFloor)
         {
             
@@ -324,6 +369,11 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         public void RemovePassenger(Passenger PassengerToRemove)
         {
             
@@ -335,6 +385,11 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         public void ResetElevatorTimer()
         {
             
@@ -346,6 +401,11 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         private void MoveTheElevatorGraphicDown(int DestinationLevel)
         {
             
@@ -357,6 +417,11 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         private void MoveTheElevatorGraphicUp(int DestinationLevel)
         {
             
@@ -368,6 +433,11 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         private void CloseTheDoor()
         {
             
@@ -400,6 +470,11 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         private void OpenTheDoor()
         {
             
@@ -447,6 +522,11 @@ namespace LiftSimulator
             return this.elevatorFrames[currentFrameNumber];
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         public ElevatorStatus GetElevatorStatus()
         {
             
@@ -479,6 +559,11 @@ namespace LiftSimulator
         #region EVENTS
 
         public event EventHandler PassengerEnteredTheElevator;
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         public void OnPassengerEnteredTheElevator(PassengerEventArgs e)
         {
             
@@ -491,6 +576,11 @@ namespace LiftSimulator
         }
 
         public event EventHandler ElevatorIsFull;
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         public void OnElevatorIsFullAndHasToGoDown(EventArgs e)
         {
             
@@ -513,6 +603,11 @@ namespace LiftSimulator
             ResetElevatorTimer();
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         public void Elevator_ElevatorTimerElapsed(object sender, ElapsedEventArgs e)
         {
             
