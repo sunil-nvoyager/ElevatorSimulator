@@ -76,6 +76,11 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         private void FindAnElevatorOrCallForANewOne()
         {            
             
@@ -105,6 +110,11 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         private void GetInToTheElevator(Elevator ElevatorToGetIn)
         {
             
@@ -125,6 +135,11 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         public void ElevatorReachedNextFloor()
         {
             
@@ -140,6 +155,11 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         private void GetOutOfTheElevator(Elevator ElevatorWhichArrived)
         {
             
@@ -151,6 +171,11 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         private void UpdatePassengerDirection()
         {
             
@@ -165,6 +190,11 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         private bool ElevatorsDirectionIsNoneOrOk(Elevator ElevatorOnMyFloor)
         {
             
@@ -182,6 +212,11 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         private void LeaveTheBuilding()
         {
             
@@ -206,6 +241,11 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         private void MovePassengersGraphicHorizontally (int DestinationPosition)
         {
             
@@ -260,6 +300,11 @@ namespace LiftSimulator
 
         #region EVENT HANDLERS
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         public void Passenger_NewPassengerAppeared(object sender, EventArgs e)
         {
             
@@ -271,6 +316,11 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         public void Passenger_ElevatorHasArrivedOrIsNoteFullAnymore(object sender, EventArgs e)
         {            
             
