@@ -64,6 +64,11 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         private int? FindFirstFreeSlotInQueue()
         {
             
@@ -80,6 +85,11 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         private void AddRemoveNewPassengerToTheQueue(Passenger PassengerToAddOrRemvove, bool AddFlag)
         {
             
@@ -108,6 +118,11 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         public void AddRemoveElevatorToTheListOfElevatorsWaitingHere(Elevator ElevatorToAddOrRemove, bool AddFlag)
         {
             
@@ -138,6 +153,11 @@ namespace LiftSimulator
             return maximumAmmountOfPeopleInTheQueue;
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         public int GetCurrentAmmountOfPeopleInTheQueue()
         {
             
@@ -181,6 +201,11 @@ namespace LiftSimulator
         #region EVENTS
 
         public event EventHandler NewPassengerAppeared;
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         public void OnNewPassengerAppeared(EventArgs e)
         {
             
@@ -193,6 +218,11 @@ namespace LiftSimulator
         }
 
         public event EventHandler ElevatorHasArrivedOrIsNotFullAnymore;
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         public void OnElevatorHasArrivedOrIsNoteFullAnymore(ElevatorEventArgs e)
         {
             
@@ -209,6 +239,11 @@ namespace LiftSimulator
 
         #region EVENT HADNLERS
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         public void Floor_NewPassengerAppeared(object sender, EventArgs e)
         {
             
@@ -224,6 +259,11 @@ namespace LiftSimulator
             
         }
 
+        /// <summary>
+        /// Sorts the given array using the bubble sort algorithm.
+        /// </summary>
+        /// <param name="arr">The array to be sorted.</param>
+        /// <param name="n">The number of elements in the array.</param>
         public void Floor_PassengerEnteredTheElevator(object sender, EventArgs e)
         {
             
