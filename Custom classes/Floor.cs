@@ -68,12 +68,13 @@ namespace LiftSimulator
         /// Finds the index of the first free slot in the queue.
         /// </summary>
         /// <returns>
-        /// The index of the first free slot in the queue if one is available; otherwise, <c>null</c>.
+        /// The index of the first free slot in the queue if available; otherwise, <c>null</c>.
         /// </returns>
         /// <remarks>
         /// This method iterates through the array of people waiting for the elevator, checking each slot to determine if it is free (i.e., contains a <c>null</c> value).
-        /// The search continues until a free slot is found or all slots have been checked. If a free slot is found, its index is returned.
-        /// If no free slots are available, the method returns <c>null</c>. This method assumes that the queue has a maximum capacity defined by <paramref name="maximumAmmountOfPeopleInTheQueue"/>.
+        /// The search continues until a free slot is found or the end of the array is reached. 
+        /// If a free slot is found, its index is returned; if no free slots are available, the method returns <c>null</c>.
+        /// This method assumes that the array has been initialized and that the maximum number of people in the queue is defined by <paramref name="maximumAmmountOfPeopleInTheQueue"/>.
         /// </remarks>
         private int? FindFirstFreeSlotInQueue()
         {
@@ -94,15 +95,15 @@ namespace LiftSimulator
         /// <summary>
         /// Adds or removes a passenger from the queue based on the specified flag.
         /// </summary>
-        /// <param name="PassengerToAddOrRemvove">The passenger to be added or removed from the queue.</param>
+        /// <param name="PassengerToAddOrRemvove">The passenger to be added to or removed from the queue.</param>
         /// <param name="AddFlag">A boolean flag indicating whether to add (true) or remove (false) the passenger.</param>
         /// <remarks>
-        /// This method manages the queue of passengers waiting for the elevator. If the <paramref name="AddFlag"/> is true, 
-        /// it first checks for an available slot in the queue using the <c>FindFirstFreeSlotInQueue</c> method. If a free slot 
-        /// is found, it adds the specified <paramref name="PassengerToAddOrRemvove"/> to the queue and updates its position 
-        /// for display in the user interface. Additionally, it adds the passenger to the building's list of people who need 
-        /// animation. If the <paramref name="AddFlag"/> is false, it removes the specified passenger from the queue by 
-        /// finding their index and setting that position in the array to null.
+        /// This method manages the queue of passengers waiting for the elevator. 
+        /// If the <paramref name="AddFlag"/> is true, it first checks for the first available slot in the queue. 
+        /// If a slot is available, it adds the specified <paramref name="PassengerToAddOrRemvove"/> to that slot, 
+        /// updates the passenger's position for UI representation, and adds the passenger to the building's list of people needing animation.
+        /// If the <paramref name="AddFlag"/> is false, it finds the index of the specified passenger in the queue and removes them by setting their slot to null.
+        /// This method ensures that the queue is managed correctly without requiring additional locking mechanisms, as it operates on a controlled number of references.
         /// </remarks>
         private void AddRemoveNewPassengerToTheQueue(Passenger PassengerToAddOrRemvove, bool AddFlag)
         {
@@ -138,11 +139,11 @@ namespace LiftSimulator
         /// <param name="ElevatorToAddOrRemove">The elevator to be added or removed from the waiting list.</param>
         /// <param name="AddFlag">A boolean flag indicating whether to add (true) or remove (false) the elevator.</param>
         /// <remarks>
-        /// This method is designed to handle concurrent modifications to the list of waiting elevators by using a lock to ensure thread safety.
-        /// When the <paramref name="AddFlag"/> is true, the specified elevator is added to the list of elevators waiting here,
-        /// and it subscribes to an event that triggers when a passenger enters the elevator. Conversely, if <paramref name="AddFlag"/> is false,
-        /// the elevator is removed from the list and unsubscribes from the passenger entry event. This ensures that the list remains accurate
-        /// and that event handlers are properly managed to prevent memory leaks or unintended behavior.
+        /// This method ensures thread safety by using a lock to prevent multiple elevators from trying to modify the list simultaneously.
+        /// If the <paramref name="AddFlag"/> is true, the specified elevator is added to the list of waiting elevators,
+        /// and it subscribes to an event that triggers when a passenger enters the elevator. Conversely, if the flag is false,
+        /// the elevator is removed from the list, and it unsubscribes from the passenger entry event. This allows for dynamic
+        /// management of elevators based on their current state and activity.
         /// </remarks>
         public void AddRemoveElevatorToTheListOfElevatorsWaitingHere(Elevator ElevatorToAddOrRemove, bool AddFlag)
         {
@@ -177,14 +178,12 @@ namespace LiftSimulator
         /// <summary>
         /// Retrieves the current number of people waiting in the queue for the elevator.
         /// </summary>
-        /// <returns>The total count of people currently in the queue.</returns>
+        /// <returns>The current count of people in the queue.</returns>
         /// <remarks>
-        /// This method counts the number of non-null entries in the <paramref name="arrayOfPeopleWaitingForElevator"/> 
-        /// up to the specified <paramref name="maximumAmmountOfPeopleInTheQueue"/>. It uses a lock to ensure thread safety 
-        /// while accessing the shared resource, preventing race conditions that could occur when multiple threads 
-        /// attempt to add or remove passengers from the queue simultaneously. The method iterates through the array, 
-        /// incrementing a counter for each non-null entry, and returns the final count, which represents the current 
-        /// number of people waiting for the elevator.
+        /// This method counts the number of non-null entries in the <paramref name="arrayOfPeopleWaitingForElevator"/> array, which represents the people waiting for the elevator.
+        /// It uses a lock to ensure thread safety while accessing the shared resource, preventing race conditions that could occur if multiple threads attempt to modify the queue simultaneously.
+        /// The method iterates through the array up to the specified <paramref name="maximumAmmountOfPeopleInTheQueue"/> and increments a counter for each non-null entry found.
+        /// This ensures an accurate count of people currently waiting in the queue.
         /// </remarks>
         public int GetCurrentAmmountOfPeopleInTheQueue()
         {
@@ -209,6 +208,16 @@ namespace LiftSimulator
             return arrayOfPeopleWaitingForElevator;
         }
 
+        /// <summary>
+        /// Retrieves the list of elevators currently waiting at this location.
+        /// </summary>
+        /// <returns>A list of <see cref="Elevator"/> objects representing the elevators waiting here.</returns>
+        /// <remarks>
+        /// This method provides access to the list of elevators that are currently waiting at the location where this method is called.
+        /// It utilizes a lock to ensure thread safety, although in this case, locking is not strictly necessary since this method is intended for passenger use only.
+        /// The returned list contains references to the elevators, allowing the caller to inspect their status or other properties as needed.
+        /// Note that the list returned is a reference to the original list, so modifications to the list will affect the original collection.
+        /// </remarks>
         public List<Elevator> GetListOfElevatorsWaitingHere()
         {
             //Lock not needed. Method for passengers only.
@@ -218,6 +227,16 @@ namespace LiftSimulator
             }
         }
 
+        /// <summary>
+        /// Retrieves the current floor level in pixels.
+        /// </summary>
+        /// <returns>The floor level represented in pixels.</returns>
+        /// <remarks>
+        /// This method provides access to the private field <c>floorLevel</c>, which stores the current floor level as an integer value.
+        /// The returned value represents the position of the floor level in a pixel-based coordinate system, allowing for precise placement
+        /// and rendering in graphical applications. This method does not modify any state and is safe to call at any time to obtain the
+        /// current floor level information.
+        /// </remarks>
         public int GetFloorLevelInPixels()
         {
             return this.floorLevel;
