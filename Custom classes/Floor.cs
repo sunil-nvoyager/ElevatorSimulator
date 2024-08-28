@@ -44,6 +44,7 @@ namespace LiftSimulator
 
         public Floor(Building myBuilding, int floorNumber, int floorLevel)
         {
+            
             this.myBuilding = myBuilding;
 
             maximumAmmountOfPeopleInTheQueue = 8; //only 8 passengers at once can be visible in current layout
@@ -60,10 +61,12 @@ namespace LiftSimulator
             //Turn off both lamps
             LampUp = false;
             LampDown = false;
+            
         }
 
         private int? FindFirstFreeSlotInQueue()
         {
+            
             //Lock not needed. Only one reference, already locked.
             for (int i = 0; i < maximumAmmountOfPeopleInTheQueue; i++)
             {
@@ -74,10 +77,12 @@ namespace LiftSimulator
             }
 
             return null;
+            
         }
 
         private void AddRemoveNewPassengerToTheQueue(Passenger PassengerToAddOrRemvove, bool AddFlag)
         {
+            
             //Lock not needed. Only two references (from this), both already locked                        
             if (AddFlag) //Add passenger
             {
@@ -99,11 +104,13 @@ namespace LiftSimulator
             {
                 int PassengerToRemoveIndex = Array.IndexOf<Passenger>(GetArrayOfPeopleWaitingForElevator(), PassengerToAddOrRemvove);
                 this.GetArrayOfPeopleWaitingForElevator()[PassengerToRemoveIndex] = null;
-            }            
+            }        
+            
         }
 
         public void AddRemoveElevatorToTheListOfElevatorsWaitingHere(Elevator ElevatorToAddOrRemove, bool AddFlag)
         {
+            
             lock (locker) //Few elevators can try to add/remove themselfs at the same time
             {
                 if (AddFlag) //Add elevator
@@ -123,6 +130,7 @@ namespace LiftSimulator
                     ElevatorToAddOrRemove.PassengerEnteredTheElevator -= this.Floor_PassengerEnteredTheElevator;
                 }
             }
+            
         }
 
         public int GetMaximumAmmountOfPeopleInTheQueue()
@@ -132,6 +140,7 @@ namespace LiftSimulator
 
         public int GetCurrentAmmountOfPeopleInTheQueue()
         {
+            
             lock (locker) //The same lock is on add/remove passenger to the queue
             {
                 int CurrentAmmountOfPeopleInTheQueue = 0;
@@ -144,6 +153,7 @@ namespace LiftSimulator
                 }
                 return CurrentAmmountOfPeopleInTheQueue;
             }
+            
         }
 
         public Passenger[] GetArrayOfPeopleWaitingForElevator()
@@ -173,21 +183,25 @@ namespace LiftSimulator
         public event EventHandler NewPassengerAppeared;
         public void OnNewPassengerAppeared(EventArgs e)
         {
+            
             EventHandler newPassengerAppeared = NewPassengerAppeared;
             if (newPassengerAppeared != null)
             {
                 newPassengerAppeared(this, e);
             }
+            
         }
 
         public event EventHandler ElevatorHasArrivedOrIsNotFullAnymore;
         public void OnElevatorHasArrivedOrIsNoteFullAnymore(ElevatorEventArgs e)
         {
+            
             EventHandler elevatorHasArrivedOrIsNoteFullAnymore = ElevatorHasArrivedOrIsNotFullAnymore;
             if (elevatorHasArrivedOrIsNoteFullAnymore != null)
             {
                 elevatorHasArrivedOrIsNoteFullAnymore(this, e);
             }
+            
         }
 
         #endregion
@@ -197,6 +211,7 @@ namespace LiftSimulator
 
         public void Floor_NewPassengerAppeared(object sender, EventArgs e)
         {
+            
             lock (locker)
             {
                 //Unsubscribe from this event (not needed anymore)
@@ -206,10 +221,12 @@ namespace LiftSimulator
 
                 AddRemoveNewPassengerToTheQueue(NewPassenger, true);
             }
+            
         }
 
         public void Floor_PassengerEnteredTheElevator(object sender, EventArgs e)
         {
+            
             lock (locker)
             {
                 Passenger PassengerWhoEnteredOrLeftTheElevator = ((PassengerEventArgs)e).PassengerWhoRisedAnEvent;
@@ -217,6 +234,7 @@ namespace LiftSimulator
                 //Remove passenger from queue                
                 AddRemoveNewPassengerToTheQueue(PassengerWhoEnteredOrLeftTheElevator, false);
             }
+            
         }
 
         #endregion

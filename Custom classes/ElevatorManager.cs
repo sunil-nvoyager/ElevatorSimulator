@@ -42,6 +42,7 @@ namespace LiftSimulator
 
         public ElevatorManager(Elevator[] ArrayOfAllElevators, Floor[] ArrayOfAllFloors)
         {
+            
             //Initialize array with elevators
             this.arrayOfAllElevators = ArrayOfAllElevators;
 
@@ -61,10 +62,12 @@ namespace LiftSimulator
             this.floorChecker = new System.Timers.Timer(1000);
             this.floorChecker.Elapsed += new ElapsedEventHandler(this.ElevatorManager_TimerElapsed);
             this.floorChecker.Start();
+            
         }
 
         public void PassengerNeedsAnElevator(Floor PassengersFloor, Direction PassengersDirection)
         {
+            
             lock (locker)//Can be invoked from ElevatorManager thread or its timer thread
             {
                 //Turn on appropriate lamp on the floor
@@ -87,10 +90,12 @@ namespace LiftSimulator
                     SendAnElevator(ElevatorToSend, PassengersFloor);
                 }                
             }
+            
         }
 
         private void FindAllElevatorsWhichCanBeSent(Floor PassengersFloor, Direction PassengersDirection)
         {
+            
             listOfAllFreeElevators.Clear();
 
             //Find elevators in their way to Passenger's floor (e.g. called by someone else)
@@ -115,10 +120,12 @@ namespace LiftSimulator
                     listOfAllFreeElevators.Add(arrayOfAllElevators[i]);
                 }
             }
+            
         }
 
         private Elevator ChooseOptimalElevatorToSend(Floor FloorWhereTheCallCameFrom)
         {
+            
             //Check if listOfAllFreeElevators is not empty
             if (listOfAllFreeElevators.Count == 0)
             {
@@ -126,15 +133,18 @@ namespace LiftSimulator
             }
 
             //Return first elevator from the list
-            return listOfAllFreeElevators[0];                
+            return listOfAllFreeElevators[0];     
+            
         }
 
         private void SendAnElevator(Elevator ElevatorToSend, Floor TargetFloor)
         {            
+            
             ElevatorToSend.AddNewFloorToTheList(TargetFloor);
 
             //Create new thread and send the elevator
-            ThreadPool.QueueUserWorkItem(delegate { ElevatorToSend.PrepareElevatorToGoToNextFloorOnTheList(); });            
+            ThreadPool.QueueUserWorkItem(delegate { ElevatorToSend.PrepareElevatorToGoToNextFloorOnTheList(); });      
+            
         }
 
         #endregion
@@ -144,6 +154,7 @@ namespace LiftSimulator
 
         public void ElevatorManager_TimerElapsed(object sender, ElapsedEventArgs e)
         {
+            
             //Check if some floor doesn't need an elevator
             for (int i = 0; i < arrayOfAllFloors.Length; i++)
                 {
@@ -158,6 +169,7 @@ namespace LiftSimulator
                         Thread.Sleep(500); //delay to avoid sending two elevators at a time
                     }   
                 }
+            
         }
 
         public void ElevatorManager_ElevatorIsFull(object sender, EventArgs e)

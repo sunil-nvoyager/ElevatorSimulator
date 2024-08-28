@@ -15,6 +15,7 @@ namespace LiftSimulator
 
         static Bitmap[] ArrayOfAllPassengerGraphics = 
         {
+            
             new Bitmap(Properties.Resources.TrollMan),
             new Bitmap(Properties.Resources.NoMan),
             new Bitmap(Properties.Resources.SheSmartass),
@@ -23,6 +24,7 @@ namespace LiftSimulator
             new Bitmap(Properties.Resources.SheMad),
             new Bitmap(Properties.Resources.ForeverAlone),
             new Bitmap(Properties.Resources.SheSmile)
+                
         };
         
         private Building myBuilding;
@@ -49,6 +51,7 @@ namespace LiftSimulator
 
         public Passenger(Building MyBuilding, Floor CurrentFloor, int TargetFloorIndex)
         {            
+            
             this.myBuilding = MyBuilding;
 
             this.currentFloor = CurrentFloor;
@@ -69,11 +72,13 @@ namespace LiftSimulator
             //Subscribe to events
             this.currentFloor.NewPassengerAppeared += new EventHandler(currentFloor.Floor_NewPassengerAppeared);
             this.currentFloor.NewPassengerAppeared += new EventHandler(this.Passenger_NewPassengerAppeared);
-            this.currentFloor.ElevatorHasArrivedOrIsNotFullAnymore += new EventHandler(this.Passenger_ElevatorHasArrivedOrIsNoteFullAnymore); 
+            this.currentFloor.ElevatorHasArrivedOrIsNotFullAnymore += new EventHandler(this.Passenger_ElevatorHasArrivedOrIsNoteFullAnymore);
+            
         }
 
         private void FindAnElevatorOrCallForANewOne()
         {            
+            
             UpdatePassengerDirection();
 
             //Copy the list of elevators available now on current floor
@@ -96,11 +101,13 @@ namespace LiftSimulator
             }
 
             //Call for an elevator
-            myBuilding.ElevatorManager.PassengerNeedsAnElevator(currentFloor, this.PassengerDirection);            
+            myBuilding.ElevatorManager.PassengerNeedsAnElevator(currentFloor, this.PassengerDirection);   
+            
         }
 
         private void GetInToTheElevator(Elevator ElevatorToGetIn)
         {
+            
             //Rise an event
             ElevatorToGetIn.OnPassengerEnteredTheElevator(new PassengerEventArgs(this));
 
@@ -115,10 +122,12 @@ namespace LiftSimulator
             
             //Update myElevator
             this.myElevator = ElevatorToGetIn;
+            
         }
 
         public void ElevatorReachedNextFloor()
         {
+            
             //For passengers, who are already inside an elevator:
             if (this.myElevator.GetCurrentFloor() == this.targetFloor)
             {
@@ -128,19 +137,23 @@ namespace LiftSimulator
                 //Get out of the elevator
                 ThreadPool.QueueUserWorkItem(delegate { GetOutOfTheElevator(this.myElevator); });
             }
+            
         }
 
         private void GetOutOfTheElevator(Elevator ElevatorWhichArrived)
         {
+            
             //Remove passenger from elevator
             ElevatorWhichArrived.RemovePassenger(this);
 
             //Leave the building
             this.LeaveTheBuilding();
+            
         }
 
         private void UpdatePassengerDirection()
         {
+            
             if (currentFloorIndex < targetFloorIndex)
             {
                 this.PassengerDirection = Direction.Up;
@@ -149,10 +162,12 @@ namespace LiftSimulator
             {
                 this.PassengerDirection = Direction.Down;
             }
+            
         }
 
         private bool ElevatorsDirectionIsNoneOrOk(Elevator ElevatorOnMyFloor)
         {
+            
             //Check if elevator has more floors to visit            
             if (ElevatorOnMyFloor.GetElevatorDirection() == this.PassengerDirection)
             {
@@ -164,10 +179,12 @@ namespace LiftSimulator
             }
 
             return false; //Elevator direction is NOT OK
+            
         }
 
         private void LeaveTheBuilding()
         {
+            
             //Update starting position
             this.PassengerPosition = new Point(PassengerPosition.X, myElevator.GetElevatorYPosition());
 
@@ -186,10 +203,12 @@ namespace LiftSimulator
 
             //No need to animate it
             myBuilding.ListOfAllPeopleWhoNeedAnimation.Remove(this);
+            
         }
 
         private void MovePassengersGraphicHorizontally (int DestinationPosition)
         {
+            
             if (this.PassengerPosition.X > DestinationPosition) //go left
             {
                 for (int i = this.PassengerPosition.X; i > DestinationPosition; i--)
@@ -206,6 +225,7 @@ namespace LiftSimulator
                     this.PassengerPosition = new Point(i, this.PassengerPosition.Y);
                 }
             }
+            
         }
 
         private void FlipPassengerGraphicHorizontally()
@@ -242,15 +262,18 @@ namespace LiftSimulator
 
         public void Passenger_NewPassengerAppeared(object sender, EventArgs e)
         {
+            
             //Unsubscribe from this event (not needed anymore)            
             this.currentFloor.NewPassengerAppeared -= this.Passenger_NewPassengerAppeared;
 
             //Search an elevator
-            FindAnElevatorOrCallForANewOne();            
+            FindAnElevatorOrCallForANewOne();  
+            
         }
 
         public void Passenger_ElevatorHasArrivedOrIsNoteFullAnymore(object sender, EventArgs e)
         {            
+            
             lock (locker) //Few elevators (on different threads) can rise this event at the same time
             {
                 Elevator ElevatorWhichRisedAnEvent = ((ElevatorEventArgs)e).ElevatorWhichRisedAnEvent;
@@ -278,6 +301,7 @@ namespace LiftSimulator
                     }
                 }                 
             }    
+            
         }
 
         #endregion EVENT HANDLERS

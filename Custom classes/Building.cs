@@ -13,22 +13,28 @@ namespace LiftSimulator
         private Floor[] arrayOfAllFloors; //list of all floors (needed e.g. for NewPassengerButtons)
         public Floor[] ArrayOfAllFloors
         {
+            
             get { return arrayOfAllFloors; }
             private set { }
+            
         }
 
         private Elevator[] arrayOfAllElevators; //list of all elvators
         public Elevator[] ArrayOfAllElevators
         {
+            
             get { return arrayOfAllElevators; }
             private set { }
+            
         }
 
         private int exitLocation;
         public int ExitLocation
         {
+            
             get { return exitLocation; }
             private set { }
+            
         }
 
         public List<Passenger> ListOfAllPeopleWhoNeedAnimation;
@@ -42,6 +48,7 @@ namespace LiftSimulator
 
         public Building()
         {
+            
             //Set exitLocation on 0 floor
             exitLocation = 677;
 
@@ -65,6 +72,7 @@ namespace LiftSimulator
 
             //Initialize ElevatorManager object
             ElevatorManager = new ElevatorManager(ArrayOfAllElevators, ArrayOfAllFloors);
+            
         }
 
         #endregion METHODS
